@@ -11,6 +11,20 @@ Object.keys(baseWebpackConfig.entry).forEach(function (name) {
   baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(baseWebpackConfig.entry[name])
 })
 
+// 多入口简化
+function htmlPlugin (str){
+  var temp = str == 'app'?'index':str;
+  return new HtmlWebpackPlugin({
+    filename: temp+'.html',
+    template: temp+'.html',
+    status: 0,
+    inject: true,
+    env:env,
+    chunks: [str],
+  })
+} 
+
+const env="dev"
 module.exports = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap })
@@ -25,26 +39,8 @@ module.exports = merge(baseWebpackConfig, {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     // https://github.com/ampedandwired/html-webpack-plugin
-    
-    // 多入口配置
-    
-    //入口一
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: 'index.html',
-      status: 0,
-      inject: true,
-      chunks: ['app'],
-    }),
-     //入口二
-    new HtmlWebpackPlugin({
-      filename: 'app2.html',
-      template: 'app2.html',
-      status: 1,
-      inject: true,
-      chunks: ['app2'],
-    }),
-    
+    htmlPlugin('app'),  // 入口1
+    htmlPlugin('app2'),  // 入口2
     new FriendlyErrorsPlugin()
   ]
 })
