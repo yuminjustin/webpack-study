@@ -13,6 +13,34 @@ var env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
   : config.build.env
 
+const a="${a}",envStr="prod";  // 页面使用
+
+// 多入口简化
+function htmlPlugin (str){
+   var entry = ['app','app2'],  // 入口数组
+       idx = entry.indexOf(str),
+       temp = str == 'app'?'index':str;
+   return new HtmlWebpackPlugin({
+    filename: process.env.NODE_ENV === 'testing'
+      ? temp+'.html'
+      : config.build[temp],
+    template: temp+'.html',
+    status:0,
+    inject: true,
+    a:a,   // 页面使用
+    env:envStr,  // 页面使用
+    minify: {
+      removeComments: true,
+      collapseWhitespace: true,
+      removeAttributeQuotes: true
+      // more options: https://github.com/kangax/html-minifier#options-quick-reference
+    },
+    // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+    excludeChunks: entry.splice(idx,1),
+    chunksSortMode: 'dependency'
+  })
+} 
+
 var webpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({sourceMap: config.build.productionSourceMap, extract: true})
@@ -26,13 +54,14 @@ var webpackConfig = merge(baseWebpackConfig, {
     chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
   },
   plugins: [
-     // 整合css
+
+    // 整合 使用同一 css
      new webpack.optimize.CommonsChunkPlugin({
-      name: 'appCss',  //生成名称
+      name: 'appCss',
       filename: utils.assetsPath('css/[name].[hash].js'), 
-      chunks:['app', 'app2']   // 添加多级入口
+      chunks:['member', 'activity','chatList','app'], 
     }),
-    new webpack.DefinePlugin({'process.env': env}),
+      new webpack.DefinePlugin({'process.env': env}),
     new webpack
       .optimize
       .UglifyJsPlugin({
@@ -55,50 +84,8 @@ var webpackConfig = merge(baseWebpackConfig, {
     // generate dist index.html with correct asset hash for caching. you can
     // customize output by editing /index.html see
     // https://github.com/ampedandwired/html-webpack-plugin
-    
-    // 多入口配置
-    //--------------------------------------------------------------
-    // 入口一
-    new HtmlWebpackPlugin({
-      filename: process.env.NODE_ENV === 'testing'
-        ? 'index.html'
-        : config.build.index,
-      template: 'index.html',
-      status:0,
-      inject: true,
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeAttributeQuotes: true
-        // more options: https://github.com/kangax/html-minifier#options-quick-reference
-      },
-      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      excludeChunks: [  // 其他入口
-        'app2'
-      ],
-      chunksSortMode: 'dependency'
-    }),
-    
-    // 入口二
-    new HtmlWebpackPlugin({
-      filename: process.env.NODE_ENV === 'testing'
-        ? 'app2.html'
-        : config.build.member,
-      template: 'app2.html',
-      status:1, 
-      inject: true,
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeAttributeQuotes: true
-        // more options: https://github.com/kangax/html-minifier#options-quick-reference
-      },
-      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      excludeChunks: [  // 其他入口
-        'app'
-      ],
-      chunksSortMode: 'dependency'
-    }),
+    htmlPlugin('app'),  // 入口一
+    htmlPlugin('app2'),  // 入口二
     // split vendor js into its own file
     new webpack
       .optimize
@@ -109,9 +96,6 @@ var webpackConfig = merge(baseWebpackConfig, {
           return (module.resource && /\.js$/.test(module.resource) && module.resource.indexOf(path.join(__dirname, '../node_modules')) === 0)
         }
       }),
-      
-       //--------------------------------------------------------------
-      
     // extract webpack runtime and module manifest to its own file in order to
     // prevent vendor hash from being updated whenever app bundle is updated
     new webpack
