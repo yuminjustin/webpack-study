@@ -20,6 +20,8 @@ function htmlPlugin (str){
    var entry = ['app','app2'],  // 入口数组
        idx = entry.indexOf(str),
        temp = str == 'app'?'index':str;
+     entry.splice(idx,1)
+   console.log("-------",entry)
    return new HtmlWebpackPlugin({
     filename: process.env.NODE_ENV === 'testing'
       ? temp+'.html'
@@ -36,7 +38,7 @@ function htmlPlugin (str){
       // more options: https://github.com/kangax/html-minifier#options-quick-reference
     },
     // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-    excludeChunks: entry.splice(idx,1),
+    excludeChunks: entry,
     chunksSortMode: 'dependency'
   })
 } 
