@@ -1,3 +1,4 @@
+/* vue-cli 配置保持不变*/
 var path = require('path')
 var config = require('../config')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
