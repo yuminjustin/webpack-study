@@ -1,3 +1,4 @@
+/* vue-cli 配置保持不变*/
 var utils = require('./utils')
 var config = require('../config')
 var isProduction = process.env.NODE_ENV === 'production'
