@@ -12,4 +12,20 @@
 #### 生成命令：<br/>
    npm run prod_mod1 (2)  
 
+#### package.json 配置
 
+  
+        ...
+        "scripts": {
+                运行命令
+                模板一
+              "dev_mod1": "node dev/mod1.js",  
+              "prod_mod1": "node prod/mod1.js",
+    
+               模板二
+              "dev_mod2": "node dev/mod2.js",
+              "prod_mod2": "node prod/mod2.js",
+              ...
+              ...
+         }
+        ...
