@@ -1,3 +1,4 @@
+/* vue-cli 配置保持不变*/
 var chalk = require('chalk')
 var semver = require('semver')
 var packageConfig = require('../package.json')
